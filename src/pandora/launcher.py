@@ -104,7 +104,7 @@ def parse_access_tokens(tokens_file, api=False):
 
     return valid_tokens
 
-
+# 主函数入口
 def main():
     global __show_verbose
 
