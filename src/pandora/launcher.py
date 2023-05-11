@@ -66,7 +66,7 @@ def confirm_access_token(token_file=None, silence=False, api=False):
             return access_token, False
 
         return access_token, True
-    #br 如涉及到这一步，默认使用已存储的token
+    #br 如涉及到这一步，默认使用已存储的token，此处输入y并回车
     if app_token_file_exists:
         confirm = 'y' if silence else Prompt.ask('A saved access token has been detected. Do you want to use it?',
                                                  choices=['y', 'n', 'del'], default='y')
