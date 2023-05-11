@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#br 从__main__.py过来的一个代码，前面是__init__.py
 import argparse
 import os
 from os import getenv
@@ -66,7 +66,7 @@ def confirm_access_token(token_file=None, silence=False, api=False):
             return access_token, False
 
         return access_token, True
-
+    #br 如涉及到这一步，默认使用已存储的token
     if app_token_file_exists:
         confirm = 'y' if silence else Prompt.ask('A saved access token has been detected. Do you want to use it?',
                                                  choices=['y', 'n', 'del'], default='y')
@@ -104,10 +104,10 @@ def parse_access_tokens(tokens_file, api=False):
 
     return valid_tokens
 
-# 主函数入口
+#br 主函数入口
 def main():
     global __show_verbose
-
+    #br 这是函数第一行，如果要进入这个函数断点应该打在这里
     api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
 
     Console.debug_b(
@@ -117,7 +117,7 @@ def main():
             Get access token: {}/auth
             Version: {}'''.format(api_prefix, __version__), end=''
     )
-
+    #br CLI中的命令参数例如 -t 就是输入token地址
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-p',
@@ -195,7 +195,7 @@ def main():
         except (ImportError, ModuleNotFoundError):
             Console.error_bh('### You need `pip install Pandora-ChatGPT[api]` to support API mode.')
             return
-
+    #br 这是后面的函数第一行，如检查token是否过期
     access_tokens = parse_access_tokens(args.tokens_file, args.api) if args.tokens_file else None
 
     if not access_tokens:
@@ -228,7 +228,7 @@ def main():
 
     ChatBotLegacy(chatgpt).run()
 
-
+#br 加载程序入口
 def run():
     hook_except_handle()
 

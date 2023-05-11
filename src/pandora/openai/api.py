@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#br 这个是从server.py 跳过来的
 import asyncio
 import json
 import queue as block_queue
@@ -155,6 +155,7 @@ class ChatGPT(API):
         return resp.json()
 
     def get_conversation(self, conversation_id, raw=False, token=None):
+        #br 获取对话
         url = '{}/api/conversation/{}'.format(self.api_prefix, conversation_id)
         resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 

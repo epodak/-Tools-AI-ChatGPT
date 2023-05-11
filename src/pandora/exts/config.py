@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#br 从launcher.py跳过来的
 from os import getenv
 from os.path import join
 

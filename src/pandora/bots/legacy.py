@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#br 从launcher.py跳转进来的
 import re
 import uuid
 
@@ -232,7 +232,7 @@ class ChatBot:
     def __load_conversation(self, conversation_id):
         if not conversation_id:
             return
-
+        #br 加载对话
         self.state = State(conversation_id=conversation_id)
 
         nodes = []
@@ -400,7 +400,7 @@ class ChatBot:
             Console.warn('  k.\tChoice access token')
 
         Console.warn('  c.\t** Start new chat')
-
+        #br 这地方让用户开始选择
         while True:
             choice = Prompt.ask('Your choice', choices=choices, show_choices=False)
             if 'c' == choice:

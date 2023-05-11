@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#br 从launcher.py跳过来
 from jwt import decode
 
 from ..openai.utils import Console
@@ -18,7 +18,7 @@ __public_key = b'-----BEGIN PUBLIC KEY-----\n' \
 def check_access_token(access_token, api=False):
     if api and access_token.startswith('sk-'):
         return True
-
+    #br 与官方检查token
     payload = (decode(access_token, key=__public_key, algorithms='RS256', audience=[
         "https://api.openai.com/v1",
         "https://openai.openai.auth0app.com/userinfo"
