@@ -159,6 +159,18 @@ class ChatGPT(API):
         return resp.json()
 
     def get_conversation(self, conversation_id, raw=False, token=None):
+        """ 从服务器上获取指定的对话内容。
+        1. 构造 API 请求的 URL，URL 中包含了 API 的前缀和对话 ID。
+        2. 通过 session 的 get 方法发送 GET 请求到服务器，请求的 URL 就是第一步中构造的 URL，请求头中包含了 token 信息。
+            self.session.get: 这是一个使用 requests 库的 session 对象的 GET 方法。这个方法会发送一个 HTTP GET 请求到指定的 URL。
+            url=url: 这是一个关键字参数，指定了请求的 URL。这个 URL 是 API 的地址，加上 conversation_id 构成的。
+            headers=self.__get_headers(token): 这是另一个关键字参数，它设置了 HTTP 请求的头部信息。self.__get_headers(token) 是一个私有方法，它返回一个包含认证信息的字典。这个字典将被用作 HTTP 请求的头部。
+            **self.req_kwargs: 这是一种在 Python 中传递关键字参数的方式，叫做解包操作。self.req_kwargs 是一个字典，它可能包含了其他一些额外的关键字参数，这些参数会被传递给 get 方法。这样做的好处是，如果有其他需要添加到请求中的参数，可以方便地将它们添加到 self.req_kwargs 字典中，而不需要修改这行代码。
+        3. 检查参数 raw，如果 raw 为 True，那么直接返回服务器的响应内容。
+        4. 检查服务器响应的状态码，如果状态码不是 200，那么表示请求失败，抛出异常。
+        5. 如果请求成功，那么返回服务器响应的 JSON 内容。
+        """
+        
         #br 获取对话
         url = '{}/api/conversation/{}'.format(self.api_prefix, conversation_id)
         resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)

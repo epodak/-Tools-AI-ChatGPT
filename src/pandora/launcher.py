@@ -106,6 +106,20 @@ def parse_access_tokens(tokens_file, api=False):
 
 #br 主函数入口
 def main():
+    """ `main`函数为Pandora CLI工具提供入口，解析命令行参数并初始化ChatGPT对话系统。根据参数设置，可以选择以API方式或代理服务器方式运行。
+    1. 设置全局的 verbose 标志，用于确定是否显示详细的错误跟踪信息。
+    2. 从环境变量获取并设置 API 前缀，然后显示一些基本信息，如获取访问令牌的 URL 和当前的版本号。
+    3. 通过argparse库解析命令行参数。
+    - 这里设置了一系列的选项，包括代理设置、访问令牌文件、服务器模式、API 模式、错误报告、详细输出等。
+    4. 根据解析得到的参数进行一系列的初始化工作。
+    - 如果启用了 sentry 错误报告，就初始化 sentry。
+    - 如果启用了 API 模式，尝试导入相关的模块，并执行数据库迁移。
+    5. 尝试从文件中解析访问令牌。如果没有指定文件，或者文件中没有有效的访问令牌，就让用户手动输入并验证。
+    - 通过 Auth0 进行身份验证，并获取访问令牌。
+    - 如果需要，保存访问令牌以供下次使用。
+    6. 根据参数创建相应的 ChatGPT 实例。如果是 API 模式，就创建 TurboGPT，否则就创建普通的 ChatGPT。
+    7. 根据参数运行相应的对话系统。如果是服务器模式，就运行 ChatBotServer，否则就运行 ChatBotLegacy。
+    """
     global __show_verbose
     #br 这是函数第一行，如果要进入这个函数断点应该打在这里
     api_prefix = getenv('CHATGPT_API_PREFIX', 'https://ai.fakeopen.com')
@@ -116,6 +130,8 @@ def main():
             Github: https://github.com/pengzhile/pandora
             Get access token: {}/auth
             Version: {}'''.format(api_prefix, __version__), end=''
+            # end 是作为关键字参数传递给 Console.debug_b 函数的。
+            # 在 Python 中，print() 函数有一个 end 参数，它用于指定字符串末尾的内容。默认情况下，end 的值为 '\n'，这意味着在打印完字符串后，会自动添加一个换行符。
     )
     #br CLI中的命令参数例如 -t 就是输入token地址
     parser = argparse.ArgumentParser()
@@ -198,6 +214,7 @@ def main():
     #br 这是后面的函数第一行，如检查token是否过期
     access_tokens = parse_access_tokens(args.tokens_file, args.api) if args.tokens_file else None
 
+    # 如果 access_tokens 是 None 或者是其它表示假值的内容（如空字符串，空列表，0等），那么就执行这个条件块的代码。
     if not access_tokens:
         access_token, need_save = confirm_access_token(args.token_file, args.server, args.api)
         if not access_token:

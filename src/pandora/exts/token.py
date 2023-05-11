@@ -16,6 +16,18 @@ __public_key = b'-----BEGIN PUBLIC KEY-----\n' \
 
 
 def check_access_token(access_token, api=False):
+    '''验证给定的访问令牌是否有效
+    1. 检查访问令牌是否以 'sk-' 开头
+        - 如果是，立即返回 `True`，结束函数。
+    2. 解码访问令牌
+        - 使用 `decode` 函数，将 `access_token` 解码为一个负载 (`payload`)。这个过程中会验证令牌的签名，确保令牌是由一个信任的发行者签发的。
+    3. 检查解码后的负载是否包含 'scope' 键
+        - 如果不包含，抛出一个异常，结束函数。
+    4. 检查 'scope' 键对应的值是否包含 'model.read' 和 'model.request'
+        - 如果不包含，抛出一个异常，结束函数。
+    5. 返回解码后的负载
+        - 如果所有检查都通过，函数将返回解码后的负载。这是函数的最终输出，可以被调用者用来获取访问令牌的详情。
+    '''
     if api and access_token.startswith('sk-'):
         return True
     #br 与官方检查token

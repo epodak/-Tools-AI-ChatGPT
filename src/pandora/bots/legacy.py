@@ -70,6 +70,7 @@ class ChatBot:
     def __get_input():
         lines = []
         #br 从用户输入获取内容，做两次停留第一次是判断是否有指令，第二次是判断是否回车结束
+
         while True:
             line = input()
 
@@ -233,6 +234,17 @@ class ChatBot:
             Console.error('#### Delete conversation failed.')
 
     def __load_conversation(self, conversation_id):
+        """ 加载指定的对话，并将对话内容以逆序方式展示出来。
+        1. 检查传入的 conversation_id，如果为空则直接返回。
+        2. 创建 State 实例，将 conversation_id 存储在其中。
+        3. 通过 chatgpt 的 get_conversation 方法获取指定 ID 的对话内容。
+        4. 通过 while 循环将对话内容按照父子关系进行反向排序，将整个对话内容从开始到结束存储在 nodes 列表中。
+        5. 设置 State 实例的 title 属性，并打印对话的标题。
+        6. 遍历 nodes 列表，处理每一条对话内容。如果对话的角色是用户或者助手，则分别处理，并打印对话内容。如果对话的角色既不是用户也不是助手，则跳过当前对话内容。
+        7. 对每一条对话内容，设置相应的 prompt 属性，并设置其 parent_id 和 message_id。
+        8. 如果当前对话内容不是合并的内容，则打印一个空行，以分隔不同的对话内容。
+        """
+
         if not conversation_id:
             return
         #br 加载对话
