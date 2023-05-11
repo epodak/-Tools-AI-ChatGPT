@@ -6,4 +6,5 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from pandora import launcher
 
 if __name__ == '__main__':
+    print("在这个地方开始")
     launcher.run()
