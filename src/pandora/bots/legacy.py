@@ -12,6 +12,7 @@ from ..openai.utils import Console
 
 class ChatPrompt:
     def __init__(self, prompt: str = None, parent_id=None, message_id=None):
+        #br 接收用户的prompt
         self.prompt = prompt
         self.parent_id = parent_id or self.gen_message_id()
         self.message_id = message_id or self.gen_message_id()
@@ -41,7 +42,7 @@ class ChatBot:
 
     def run(self):
         self.token_key = self.__choice_token_key()
-
+        #br 导出会话历史
         conversation_base = self.__choice_conversation()
         if conversation_base:
             self.__load_conversation(conversation_base['id'])
@@ -51,6 +52,7 @@ class ChatBot:
         self.__talk_loop()
 
     def __talk_loop(self):
+        #br 开始循环对话的地方
         while True:
             Console.info_b('You{}:'.format(' (edit)' if self.state and self.state.edit_index else ''))
 
@@ -67,6 +69,7 @@ class ChatBot:
     @staticmethod
     def __get_input():
         lines = []
+        #br 从用户输入获取内容，做两次停留第一次是判断是否有指令，第二次是判断是否回车结束
         while True:
             line = input()
 
@@ -248,6 +251,7 @@ class ChatBot:
             current_node_id = node['parent']
 
         self.state.title = result['title']
+        #br 可能是打印对话
         self.__print_conversation_title(self.state.title)
 
         merge = False
@@ -278,25 +282,26 @@ class ChatBot:
             prompt.prompt = message['content']['parts'][0]
             prompt.parent_id = node['parent']
             prompt.message_id = node['id']
-
+            #br 这地方可能是gpt流式输出的开始
             if not merge:
                 print()
 
     def __talk(self, prompt):
         Console.success_b('ChatGPT:')
-
+        #br 对用户的对话开始发送给ChatGPT
         first_prompt = not self.state.conversation_id
 
         if self.state.edit_index:
             idx = self.state.edit_index - 1
             user_prompt = self.state.user_prompts[idx]
             self.state.user_prompt = ChatPrompt(prompt, parent_id=user_prompt.parent_id)
+            #br 这地方可能是流式输出发送对话
             self.state.user_prompts = self.state.user_prompts[0:idx]
 
             self.state.edit_index = None
         else:
             self.state.user_prompt = ChatPrompt(prompt, parent_id=self.state.chatgpt_prompt.message_id)
-
+        #br 流式输出结束
         status, _, generator = self.chatgpt.talk(prompt, self.state.model_slug, self.state.user_prompt.message_id,
                                                  self.state.user_prompt.parent_id, self.state.conversation_id,
                                                  token=self.token_key)
@@ -334,6 +339,7 @@ class ChatBot:
         self.__print_reply(status, generator)
 
     def __print_reply(self, status, generator):
+        #br 这地方开始打印流式输出，这地方一个字一个字的蹦
         if 200 != status:
             raise Exception(status, next(generator))
 
@@ -365,6 +371,7 @@ class ChatBot:
         print('\n')
 
     def __choice_conversation(self, page=1, page_size=20):
+        #br 让用户选择id
         conversations = self.chatgpt.list_conversations((page - 1) * page_size, page_size, token=self.token_key)
         if not conversations['total']:
             return None
@@ -375,6 +382,7 @@ class ChatBot:
         last_page = (conversations['offset'] + conversations['limit']) >= conversations['total']
 
         Console.info_b('Choice conversation (Page {}):'.format(page))
+        #br 这里就是后台返回循环查询的对话的数据
         for idx, item in enumerate(items):
             number = str(idx + 1)
             choices.append(number)

@@ -57,6 +57,7 @@ class API:
     @staticmethod
     def __generate_wrap(queue, thread, event):
         while True:
+            #br 可能是对gpt的回答进行编码处理
             try:
                 item = queue.get()
                 if item is None:
@@ -83,6 +84,7 @@ class API:
                 queue.put(None)
 
     def _request_sse(self, url, headers, data):
+        #br 这地方是队列获取，可能是流式输出的开始
         queue, e = block_queue.Queue(), threading.Event()
         t = threading.Thread(target=asyncio.run, args=(self._do_request_sse(url, headers, data, queue, e),))
         t.start()
@@ -92,6 +94,7 @@ class API:
 
 class ChatGPT(API):
     def __init__(self, access_tokens: dict, proxy=None):
+        #br API post通讯
         self.access_tokens = access_tokens
         self.access_token_key_list = list(access_tokens)
         self.default_token_key = self.access_token_key_list[0]
@@ -143,6 +146,7 @@ class ChatGPT(API):
         return result['models']
 
     def list_conversations(self, offset, limit, raw=False, token=None):
+        #br 列出对话ID
         url = '{}/api/conversations?offset={}&limit={}'.format(self.api_prefix, offset, limit)
         resp = self.session.get(url=url, headers=self.__get_headers(token), **self.req_kwargs)
 
@@ -223,6 +227,7 @@ class ChatGPT(API):
 
     def talk(self, prompt, model, message_id, parent_message_id, conversation_id=None, stream=True, token=None):
         data = {
+            #br 将用户的prompt打包
             'action': 'next',
             'messages': [
                 {
@@ -243,7 +248,7 @@ class ChatGPT(API):
 
         if conversation_id:
             data['conversation_id'] = conversation_id
-
+        #br 返回gpt答案
         return self.__request_conversation(data, token)
 
     def goon(self, model, parent_message_id, conversation_id, stream=True, token=None):
@@ -280,6 +285,7 @@ class ChatGPT(API):
         return self.__request_conversation(data, token)
 
     def __request_conversation(self, data, token=None):
+        #br 获取gpt对话
         url = '{}/api/conversation'.format(self.api_prefix)
         headers = {**self.session.headers, **self.__get_headers(token), 'Accept': 'text/event-stream'}
 
