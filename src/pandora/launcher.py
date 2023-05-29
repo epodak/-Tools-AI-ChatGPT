@@ -7,16 +7,16 @@ from os import getenv
 from loguru import logger
 from rich.prompt import Prompt, Confirm
 
-from . import __version__
-from .bots.legacy import ChatBot as ChatBotLegacy
-from .bots.server import ChatBot as ChatBotServer
-from .exts import sentry
-from .exts.config import USER_CONFIG_DIR
-from .exts.hooks import hook_except_handle
-from .exts.token import check_access_token_out
-from .openai.api import ChatGPT
-from .openai.auth import Auth0
-from .openai.utils import Console
+# from  pandora. import __version__
+from  pandora.bots.legacy import ChatBot as ChatBotLegacy
+from  pandora.bots.server import ChatBot as ChatBotServer
+from  pandora.exts import sentry
+from  pandora.exts.config import USER_CONFIG_DIR
+from  pandora.exts.hooks import hook_except_handle
+from  pandora.exts.token import check_access_token_out
+from  pandora.openai.api import ChatGPT
+from  pandora.openai.auth import Auth0
+from  pandora.openai.utils import Console
 
 if 'nt' == os.name:
     import pyreadline3 as readline
@@ -79,7 +79,7 @@ def confirm_access_token(token_file=None, silence=False, api=False):
             return access_token, False
         elif 'del' == confirm:
             os.remove(app_token_file)
-
+    print("获取完成了？")
     return None, True
 
 
@@ -204,8 +204,8 @@ def main():
 
     if args.api:
         try:
-            from .openai.token import gpt_num_tokens
-            from .migrations.migrate import do_migrate
+            from  pandora.openai.token import gpt_num_tokens
+            from  pandora.migrations.migrate import do_migrate
 
             do_migrate()
         except (ImportError, ModuleNotFoundError):
@@ -234,7 +234,7 @@ def main():
         access_tokens = {'default': access_token}
 
     if args.api:
-        from .turbo.chat import TurboGPT
+        from  pandora.turbo.chat import TurboGPT
 
         chatgpt = TurboGPT(access_tokens, args.proxy)
     else:
@@ -258,3 +258,8 @@ def run():
             logger.exception('Exception occurred.')
 
         sentry.capture(e)
+
+if __name__ == '__main__':
+    print("在这个地方开始")
+    __version__ = '1.1.0'
+    test = run()
